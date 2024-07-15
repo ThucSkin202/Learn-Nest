@@ -11,28 +11,24 @@ import {
   ValidationPipe,
   UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { LoggingInterceptor } from '../logging/logging.interceptor';
 import { httpMessage, httpStatus } from 'src/global/globalEnum';
 import { ResponseData } from 'src/global/globalClass';
-import { User } from './entities/user.entity';
-// import { RolesGuard } from '../roles/roles.guard';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostsService } from './post.service';
 
-@Controller('users')
-// @UseGuards(RolesGuard)
+@Controller('posts')
 @UseInterceptors(LoggingInterceptor)
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class PostController {
+  constructor(private readonly postService: PostsService) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createPostDto: CreatePostDto) {
     try {
-      const data = await this.usersService.create(createUserDto);
-      return new ResponseData<User>(
+      const data = await this.postService.create(createPostDto);
+      return new ResponseData<CreatePostDto>(
         data,
         httpStatus.SUCCESS,
         'Created successfully',
@@ -49,8 +45,8 @@ export class UsersController {
   @Get()
   async findAll(): Promise<ResponseData<any>> {
     try {
-      const data = await this.usersService.findAll();
-      return new ResponseData<any>(data, httpStatus.SUCCESS, 'Get all users');
+      const data = await this.postService.findAll();
+      return new ResponseData<any>(data, httpStatus.SUCCESS, 'Get all posts');
     } catch (error) {
       return new ResponseData<string>(
         null,
@@ -63,7 +59,7 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<ResponseData<any>> {
     try {
-      const data = await this.usersService.findOne(+id);
+      const data = await this.postService.findOne(+id);
       return new ResponseData<any>(data, httpStatus.SUCCESS, 'ok');
     } catch (error) {
       return new ResponseData<string>(
@@ -76,13 +72,13 @@ export class UsersController {
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
-  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: number, @Body() updateUserDto: UpdatePostDto) {
     try {
-      const data = await this.usersService.update(+id, updateUserDto);
+      const data = await this.postService.update(+id, updateUserDto);
       return new ResponseData<any>(
         data,
         httpStatus.SUCCESS,
-        'Update user successfully',
+        'Update successfully',
       );
     } catch (error) {
       return new ResponseData<string>(
@@ -96,11 +92,11 @@ export class UsersController {
   @Delete(':id')
   async remove(@Param('id') id: number) {
     try {
-      const data = await this.usersService.remove(+id);
+      const data = await this.postService.remove(+id);
       return new ResponseData<any>(
         data,
         httpStatus.SUCCESS,
-        'User deleted successfully',
+        'Deleted successfully',
       );
     } catch (error) {
       return new ResponseData<string>(

@@ -6,4 +6,7 @@ export class CreateUserDto {
   name: string;
   @IsEmail()
   email: string;
+  profileId?: number;
+  postIds?: number[];
+  projectIds?: number[];
 }
